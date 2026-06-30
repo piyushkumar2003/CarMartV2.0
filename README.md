@@ -8,8 +8,6 @@ The project follows **Microservices Architecture**, **Domain Driven Design (DDD)
 
 # 📖 Architecture Overview
 
-![Architecture](docs/architecture.png)
-
 ## Key Highlights
 
 - ✅ Microservices Architecture
