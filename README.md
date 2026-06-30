@@ -1,55 +1,367 @@
-# Airline Ticket Booking System
+# ✈️ Airline Booking System
 
-A Microservices-based Airline Booking System using Spring Boot and Eureka.
+A scalable, cloud-ready **Airline Booking System** built using **Spring Boot Microservices**, **Spring Cloud**, **Apache Kafka**, **Redis**, **MySQL**, and **Angular**.
 
-## Architecture
-- **Eureka Server**: Service Registry (Port 8761)
-- **Flight Management Service**: Manages flights (Port 8082)
-- **User Management Service**: Manages users and bookings (Port 8081)
+The project follows **Microservices Architecture**, **Domain Driven Design (DDD)**, **Event-Driven Communication**, and modern cloud-native development practices.
 
-## Prerequisites
-- Java 17
+---
+
+# 📖 Architecture Overview
+
+![Architecture](docs/architecture.png)
+
+## Key Highlights
+
+- ✅ Microservices Architecture
+- ✅ API Gateway
+- ✅ Eureka Service Discovery
+- ✅ Spring Cloud Config Server
+- ✅ OAuth2 / JWT Authentication
+- ✅ Apache Kafka Event Streaming
+- ✅ Redis Caching
+- ✅ MySQL Database Per Service
+- ✅ Circuit Breaker (Resilience4j)
+- ✅ Distributed Tracing (Zipkin)
+- ✅ Monitoring (Prometheus + Grafana)
+- ✅ Docker Ready
+- ✅ CI/CD Ready
+
+---
+
+# 🚀 Microservices
+
+| Service | Port | Description |
+|----------|------|-------------|
+| Config Server | 8888 | Centralized configuration |
+| Eureka Server | 8761 | Service Discovery |
+| API Gateway | 8080 | Entry point for all APIs |
+| User Service | 8081 | User Management |
+| Flight Service | 8082 | Flight Inventory |
+| Booking Service | 8083 | Booking & Seat Reservation |
+| Payment Service | 8084 | Payment Processing |
+| Notification Service | 8085 | Email/SMS Notifications |
+
+---
+
+# 📦 Technology Stack
+
+## Backend
+
+- Java 21
+- Spring Boot
+- Spring Cloud
+- Spring Security
+- Spring Data JPA
+- Hibernate
 - Maven
 
-## How to Run
+## Microservices
 
-1. **Start Eureka Server**
-   ```bash
-   cd eureka-server
-   mvn spring-boot:run
-   ```
+- API Gateway
+- Eureka Discovery Server
+- Config Server
+- Resilience4j
+- OpenFeign
 
-2. **Start Flight Management Service**
-   ```bash
-   cd flight-management-service
-   mvn spring-boot:run
-   ```
+## Database
 
-3. **Start User Management Service**
-   ```bash
-   cd user-management-service
-   mvn spring-boot:run
-   ```
+- MySQL
 
-## URLs to Test
+Each service owns its own database.
 
-### Eureka Dashboard
-- URL: [http://localhost:8761](http://localhost:8761)
+```
+user_db
+flight_db
+booking_db
+payment_db
+notification_db
+```
 
-### User Service (Entry Point for Users)
-- **Landing Page**: [http://localhost:8081/](http://localhost:8081/)
-- **Login**: [http://localhost:8081/login](http://localhost:8081/login)
-  - Admin Credentials: `admin` / `admin123`
-  - Passenger Credentials: `passenger` / `pass123`
-- **Register**: [http://localhost:8081/register](http://localhost:8081/register)
-- **Passenger Dashboard**: [http://localhost:8081/passenger-dashboard](http://localhost:8081/passenger-dashboard)
-- **Admin Dashboard**: [http://localhost:8081/admin-dashboard](http://localhost:8081/admin-dashboard)
+---
 
-### Flight Service (Direct Access)
-- **All Flights**: [http://localhost:8082/all-flights](http://localhost:8082/all-flights)
-- **Reports**: [http://localhost:8082/report](http://localhost:8082/report)
+## Messaging
 
-## Features
-- **User Service**: Registration, Login, Booking, View Bookings, Cancel, Upgrade.
-- **Flight Service**: Add Flight (Admin), View Flights, Search API, Occupancy Report.
-- **Inter-service**: User Service fetches flight data and books seats via REST API calls to Flight Service.
+Apache Kafka is used for asynchronous communication.
+
+### Topics
+
+```
+booking.created
+
+payment.success
+
+payment.failed
+
+booking.cancelled
+
+notification.send
+```
+
+---
+
+## Cache
+
+Redis is used for
+
+- Seat Locking
+- Session Storage
+- Price Cache
+- Rate Limiting
+
+---
+
+## Security
+
+- JWT Authentication
+- OAuth2
+- RBAC
+- HTTPS
+
+---
+
+# 📂 Project Structure
+
+```
+AirlineBookingSystem
+
+├── api-gateway
+├── config-server
+├── service-registry
+├── auth-service
+├── user-service
+├── flight-service
+├── booking-service
+├── payment-service
+├── notification-service
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+# 🔄 Booking Workflow
+
+### Step 1
+
+User searches flights.
+
+↓
+
+### Step 2
+
+Flight Service returns available flights.
+
+↓
+
+### Step 3
+
+Booking Service locks seat.
+
+↓
+
+### Step 4
+
+Booking Created Event is published.
+
+↓
+
+### Step 5
+
+Payment Service processes payment.
+
+↓
+
+### Step 6
+
+Payment Success Event is published.
+
+↓
+
+### Step 7
+
+Notification Service sends
+
+- Email
+- SMS
+- Ticket Confirmation
+
+---
+
+# 📡 API Flow
+
+```
+Client
+
+↓
+
+API Gateway
+
+↓
+
+Authentication
+
+↓
+
+User Service
+Flight Service
+Booking Service
+Payment Service
+Notification Service
+
+↓
+
+Database
+```
+
+---
+
+# 📨 Event Driven Communication
+
+```
+Booking Created
+        │
+        ▼
+Apache Kafka
+        │
+        ▼
+Payment Service
+        │
+        ▼
+Payment Success
+        │
+        ▼
+Notification Service
+```
+
+---
+
+# 🗄️ Database Design
+
+Every microservice has its own database.
+
+| Service | Database |
+|----------|-----------|
+| User | user_db |
+| Flight | flight_db |
+| Booking | booking_db |
+| Payment | payment_db |
+| Notification | notification_db |
+
+---
+
+# 📊 Monitoring
+
+- Spring Boot Actuator
+- Prometheus
+- Grafana
+
+---
+
+# 🔍 Distributed Tracing
+
+- Zipkin
+- Spring Cloud Sleuth
+
+---
+
+# 🛡️ Fault Tolerance
+
+- Resilience4j
+- Circuit Breaker
+- Retry
+- Rate Limiter
+
+---
+
+# 🐳 Docker
+
+Start complete infrastructure
+
+```bash
+docker-compose up -d
+```
+
+---
+
+# ▶️ Running the Project
+
+### Clone
+
+```bash
+git clone https://github.com/piyushkumar2003/CarMartV2.0.git
+```
+
+### Start Services
+
+1. Config Server
+2. Eureka Server
+3. API Gateway
+4. User Service
+5. Flight Service
+6. Booking Service
+7. Payment Service
+8. Notification Service
+
+---
+
+# UML Domain Model
+
+## User Service
+
+- User
+- Role
+
+## Flight Service
+
+- Flight
+- Seat
+
+## Booking Service
+
+- Booking
+- Payment
+
+## Payment Service
+
+- PaymentTransaction
+
+## Notification Service
+
+- Notification
+
+---
+
+# Cross Cutting Concerns
+
+- Centralized Logging (ELK)
+- Distributed Tracing
+- Monitoring & Alerts
+- Health Checks
+- CI/CD
+- Security
+- Redis Cache
+
+---
+
+# Future Enhancements
+
+- Kubernetes Deployment
+- AWS Deployment
+- ELK Stack Integration
+- OpenTelemetry
+- RabbitMQ Support
+- GraphQL Gateway
+- Dynamic Pricing Engine
+- AI-based Flight Recommendations
+
+---
+
+# 👨‍💻 Author
+
+**Piyush Kumar**
+
+HCL Tech | IIIT Delhi
+
+Software Engineer | Java | Spring Boot | Microservices | System Design
+
+---
