@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Passenger Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .dashboard-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-banner h1 {
+            margin: 0;
+            font-size: 2.2em;
+        }
+
+        .welcome-banner p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-top: 5px solid #ccc;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-booking {
+            border-top-color: #28a745;
+        }
+
+        .card-profile {
+            border-top-color: #17a2b8;
+        }
+
+        .card-history {
+            border-top-color: #ffc107;
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .action-list li {
+            margin-bottom: 12px;
+        }
+
+        .action-link {
+            display: block;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .action-link:hover {
+            background: #e9ecef;
+            color: #007bff;
+            border-left-color: #007bff;
+        }
+
+        .action-link .icon {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        ============================================
+        PASSENGER DASHBOARD
+        ============================================
+        
+        A central hub for all passenger actions.
+        Uses a responsive grid layout with action cards.
+    -->
+
+    <div class="dashboard-container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h1>Welcome, <span th:text="${user.username}">User</span>!</h1>
+            <p>Manage your flights, profile, and bookings all in one place.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- 1. Booking Actions -->
+            <div class="dashboard-card card-booking">
+                <div class="card-title">✈️ Booking Actions</div>
+                <ul class="action-list">
+                    <li>
+                        <a href="/search-flights" class="action-link">
+                            <span class="icon">🔍</span> Search Flights
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/book-flight" class="action-link">
+                            <span class="icon">🎫</span> Book New Flight
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 2. Profile Actions -->
+            <div class="dashboard-card card-profile">
+                <div class="card-title">👤 Profile Actions</div>
+                <ul class="action-list">
+                    <li>
+                        <a href="/profile" class="action-link">
+                            <span class="icon">📋</span> View Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/edit-profile" class="action-link">
+                            <span class="icon">✏️</span> Edit Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/frequent-travelers" class="action-link">
+                            <span class="icon">👥</span> Manage Travelers
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 3. Ticket & History -->
+            <div class="dashboard-card card-history">
+                <div class="card-title">📜 Ticket & History</div>
+                <ul class="action-list">
+                    <li>
+                        <a href="/my-bookings" class="action-link">
+                            <span class="icon">📅</span> View Booking History
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/pnr-search" class="action-link">
+                            <span class="icon">🔎</span> Search / Download by PNR
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="/logout" class="btn btn-red" style="padding: 10px 30px;">🚪 Logout</a>
+        </div>
+    </div>
+</body>
+
+</html>

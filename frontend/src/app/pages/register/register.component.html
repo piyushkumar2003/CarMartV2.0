@@ -1,0 +1,43 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold text-primary">Register</h3>
+                        <p class="text-muted">Create a new account</p>
+                    </div>
+
+                    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+                    <div *ngIf="success" class="alert alert-success">{{success}}</div>
+
+                    <form (ngSubmit)="register()">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Username</label>
+                            <input type="text" class="form-control" name="username" [(ngModel)]="user.username"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email</label>
+                            <input type="email" class="form-control" name="email" [(ngModel)]="user.email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Password</label>
+                            <input type="password" class="form-control" name="password" [(ngModel)]="user.password"
+                                required>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill fw-bold">Register</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Already have an account? <a routerLink="/login"
+                                class="text-primary fw-bold text-decoration-none">Login</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

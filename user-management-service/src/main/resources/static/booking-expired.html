@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Booking Expired</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .expired-container {
+            max-width: 600px;
+            margin: 40px auto;
+            text-align: center;
+        }
+
+        .expired-box {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .expired-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .expired-title {
+            color: #721c24;
+            margin: 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: #dc3545;
+            color: white;
+            margin-top: 15px;
+        }
+
+        .info-box {
+            background: #e2e3e5;
+            border: 1px solid #d6d8db;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        ============================================
+        BOOKING EXPIRED PAGE
+        ============================================
+        
+        PURPOSE:
+        - Show that the booking has expired
+        - Explain why (TTL expired, seat released)
+        - Provide option to try again
+        
+        STATUS: EXPIRED
+        - Redis lock expired (user took > 10 mins)
+        - Seat has been released
+    -->
+
+    <div class="expired-container">
+        <h1>Booking Expired</h1>
+
+        <div class="expired-box">
+            <div class="expired-icon">⏰</div>
+            <h2 class="expired-title">Your Booking Has Expired</h2>
+            <span class="status-badge">EXPIRED</span>
+        </div>
+
+        <!-- Booking Details -->
+        <div class="info-box" th:if="${booking}">
+            <h3>📋 Booking Information</h3>
+            <p><strong>Booking ID:</strong> #<span th:text="${booking.id}">123</span></p>
+            <p><strong>Flight:</strong> <span th:text="${booking.flightNumber}">F101</span></p>
+            <p><strong>Seat:</strong> <span th:text="${booking.seatNumber}">3A</span> (now released)</p>
+            <p><strong>Route:</strong>
+                <span th:text="${booking.source}">NYC</span> →
+                <span th:text="${booking.destination}">LA</span>
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h3>ℹ️ What Happened?</h3>
+            <p>
+                When you selected your seat, it was temporarily held for <strong>10 minutes</strong>.
+                Since the booking wasn't confirmed within this time, the seat reservation expired
+                and the seat was released back to the available pool.
+            </p>
+            <p>
+                <strong>This is done to ensure fairness</strong> — seats shouldn't be held indefinitely
+                while other passengers are waiting.
+            </p>
+        </div>
+
+        <div class="info-box">
+            <h3>🔄 What Can I Do?</h3>
+            <ul>
+                <li>Go back to flight search and start a new booking</li>
+                <li>The same seat may or may not be available</li>
+                <li>Next time, please confirm quickly after selecting a seat</li>
+            </ul>
+        </div>
+
+        <!-- Error message if any -->
+        <div th:if="${error}" style="color: red; margin: 20px 0;">
+            <strong>Error:</strong> <span th:text="${error}"></span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="margin-top: 30px;">
+            <a href="/book-flight" class="btn btn-green" style="font-size: 1.1em; padding: 12px 25px;">
+                🔍 Search Flights Again
+            </a>
+            <br><br>
+            <a href="/my-bookings" class="btn">View My Bookings</a>
+            <a href="/passenger-dashboard" class="btn" style="background: #6c757d;">Go to Dashboard</a>
+        </div>
+    </div>
+</body>
+
+</html>

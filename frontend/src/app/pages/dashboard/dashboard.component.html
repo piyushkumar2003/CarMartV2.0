@@ -1,0 +1,77 @@
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">{{user?.username || 'User'}}</h5>
+                    <p class="text-muted small">{{user?.email || 'user@example.com'}}</p>
+                    <button class="btn btn-outline-danger btn-sm rounded-pill px-4" (click)="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <h4 class="fw-bold mb-4">My Bookings</h4>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-danger border-0 shadow-sm mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                {{errorMessage}}
+            </div>
+
+            <div *ngIf="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <div *ngIf="!loading && !errorMessage && bookings.length === 0" class="alert alert-info border-0 shadow-sm">
+                <i class="bi bi-info-circle me-2"></i> No bookings found. <a routerLink="/"
+                    class="fw-bold text-decoration-none">Book a flight now!</a>
+            </div>
+
+            <div *ngFor="let booking of bookings" class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            <div class="bg-light rounded p-2 text-primary fw-bold">
+                                #{{booking.id || booking.bookingId}}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-0 fw-bold">Flight Booking</h6>
+                            <small class="text-muted">{{(booking.createdAt || booking.bookingDate) | date:'medium'}}</small>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <span class="badge rounded-pill bg-success"
+                                *ngIf="booking.status === 'CONFIRMED'">CONFIRMED</span>
+                            <span class="badge rounded-pill bg-warning text-dark"
+                                *ngIf="booking.status === 'PENDING'">PENDING</span>
+                            <span class="badge rounded-pill bg-danger"
+                                *ngIf="booking.status === 'PAYMENT_PENDING'">PAYMENT PENDING</span>
+                            <span class="badge rounded-pill bg-secondary"
+                                *ngIf="booking.status === 'EXPIRED'">EXPIRED</span>
+                            <span class="badge rounded-pill bg-secondary"
+                                *ngIf="booking.status === 'CANCELLED'">CANCELLED</span>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <button *ngIf="booking.status === 'PAYMENT_PENDING'"
+                                class="btn btn-sm btn-outline-warning rounded-pill"
+                                (click)="retryPayment(booking)">
+                                Retry Payment
+                            </button>
+                            <button *ngIf="booking.status === 'PAYMENT_PENDING'"
+                                class="btn btn-sm btn-outline-danger rounded-pill ms-2"
+                                (click)="cancelBooking(booking)">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

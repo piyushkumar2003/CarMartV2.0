@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Booking Pending</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Page-specific styles */
+        .pending-container {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .pending-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .pending-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .pending-title {
+            color: #856404;
+            margin: 0;
+        }
+
+        .timer-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .timer-box h3 {
+            color: #721c24;
+            margin-top: 0;
+        }
+
+        .countdown {
+            font-size: 2em;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .booking-details {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .booking-details h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .seat-highlight {
+            font-size: 1.5em;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .action-buttons form {
+            display: inline;
+        }
+
+        .btn-large {
+            font-size: 1.1em;
+            padding: 12px 25px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #ffc107;
+            color: #856404;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        ============================================
+        BOOKING PENDING PAGE
+        ============================================
+        
+        PURPOSE:
+        - Show that seat is locked and booking is pending
+        - Display countdown message (text only, no JS timer)
+        - Allow user to Confirm or Cancel
+        
+        STATUS: PENDING
+        - Seat is locked in Redis (10 min TTL)
+        - Waiting for user confirmation
+    -->
+
+    <div class="pending-container">
+        <h1>Booking in Progress</h1>
+
+        <!-- Pending Status Box -->
+        <div class="pending-box">
+            <div class="pending-icon">⏳</div>
+            <h2 class="pending-title">Your Seat is Reserved!</h2>
+            <span class="status-badge status-pending">PENDING</span>
+        </div>
+
+        <!-- Timer Warning -->
+        <div class="timer-box">
+            <h3>⚠️ Time Sensitive</h3>
+            <p>Your seat reservation will expire in approximately:</p>
+            <div class="countdown">10 Minutes</div>
+            <p style="margin-bottom: 0;">
+                Please confirm your booking soon to avoid losing this seat!
+            </p>
+        </div>
+
+        <!-- Booking Details -->
+        <div class="booking-details">
+            <h3>📋 Booking Details</h3>
+
+            <div class="detail-row">
+                <span><strong>Booking ID:</strong></span>
+                <span th:text="'#' + ${booking.id}">#123</span>
+            </div>
+
+            <div class="detail-row">
+                <span><strong>Flight:</strong></span>
+                <span th:text="${booking.flightNumber}">F101</span>
+            </div>
+
+            <div class="detail-row">
+                <span><strong>Route:</strong></span>
+                <span th:text="${booking.source} + ' → ' + ${booking.destination}">NYC → LA</span>
+            </div>
+
+            <div class="detail-row">
+                <span><strong>Date:</strong></span>
+                <span th:text="${booking.dateOfJourney}">2024-01-15</span>
+            </div>
+
+            <div class="detail-row">
+                <span><strong>Selected Seat:</strong></span>
+                <span class="seat-highlight" th:text="${booking.seatNumber}">3A</span>
+            </div>
+
+            <div class="detail-row">
+                <span><strong>Class:</strong></span>
+                <span th:text="${booking.seatClass}">Economy</span>
+            </div>
+
+            <div class="detail-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;">
+                <span><strong>Total Price:</strong></span>
+                <span class="seat-highlight" style="color: #28a745;" th:text="'₹ ' + ${booking.price}">$350</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <!-- Confirm Button -->
+            <form action="/confirm-booking" method="post">
+                <input type="hidden" name="bookingId" th:value="${booking.id}">
+                <button type="submit" class="btn btn-green btn-large">
+                    ✅ Confirm & Pay
+                </button>
+            </form>
+
+            <!-- Cancel Button -->
+            <form action="/cancel-booking" method="post">
+                <input type="hidden" name="bookingId" th:value="${booking.id}">
+                <button type="submit" class="btn btn-red btn-large">
+                    ❌ Cancel Booking
+                </button>
+            </form>
+        </div>
+
+        <br>
+        <p style="color: #666;">
+            <strong>Note:</strong> By confirming, you agree to complete the booking.
+            Cancellation policy applies after confirmation.
+        </p>
+    </div>
+</body>
+
+</html>

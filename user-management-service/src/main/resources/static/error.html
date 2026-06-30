@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Error</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 40px;
+            margin: 20px 0;
+        }
+
+        .error-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            color: #721c24;
+            margin: 0;
+        }
+
+        .error-message {
+            color: #856404;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-box">
+            <div class="error-icon">⚠️</div>
+            <h1 class="error-title">Something Went Wrong</h1>
+        </div>
+
+        <div th:if="${error}" class="error-message">
+            <strong>Error Details:</strong><br>
+            <span th:text="${error}">An unexpected error occurred.</span>
+        </div>
+
+        <p>We apologize for the inconvenience. Please try again or contact support.</p>
+
+        <div style="margin-top: 30px;">
+            <a href="/" class="btn">🏠 Go Home</a>
+            <a href="/passenger-dashboard" class="btn" style="background: #6c757d;">Dashboard</a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+:root {
+  --primary-color: #041029; /* Deep Blue like MakeMyTrip header */
+  --accent-color: #ef4f4f; /* Red accent */
+  --bg-color: #f2f2f2;
+}
+
+body {
+  background-color: var(--bg-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Reports</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <h1>Flight Occupancy Report</h1>
+    <a href="/all-flights">Back to List</a>
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>Flight No</th>
+                <th>Total Seats</th>
+                <th>Available Seats</th>
+                <th>Occupancy %</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="flight : ${flights}">
+                <td th:text="${flight.flightNumber}"></td>
+                <td th:text="${flight.totalSeats}"></td>
+                <td th:text="${flight.availableSeats}"></td>
+                <td th:text="${(flight.totalSeats - flight.availableSeats) * 100 / flight.totalSeats} + '%'"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

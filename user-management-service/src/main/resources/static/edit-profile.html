@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .edit-container {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .edit-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links {
+            margin-bottom: 20px;
+        }
+
+        .nav-links a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="edit-container">
+        <div class="nav-links">
+            <a href="/profile">← Back to Profile</a>
+        </div>
+
+        <h1>✏️ Edit Profile</h1>
+
+        <div class="edit-card">
+            <form action="/update-profile" method="post">
+
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" th:value="${passenger.fullName}"
+                        placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" th:value="${passenger.email}"
+                        placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" th:value="${passenger.phone}"
+                        placeholder="Enter your phone number" pattern="\d{10}"
+                        title="Phone number must be exactly 10 digits" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" th:value="${passenger.dateOfBirth}" max="">
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="MALE" th:selected="${passenger.gender == 'MALE'}">Male</option>
+                        <option value="FEMALE" th:selected="${passenger.gender == 'FEMALE'}">Female</option>
+                        <option value="OTHER" th:selected="${passenger.gender == 'OTHER'}">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address" placeholder="Enter your address"
+                        th:text="${passenger.address}"></textarea>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                    <a href="#" onclick="history.back()" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Set max date for DOB to today
+        document.getElementById('dateOfBirth').max = new Date().toISOString().split('T')[0];
+    </script>
+    </div>
+    </div>
+</body>
+
+</html>

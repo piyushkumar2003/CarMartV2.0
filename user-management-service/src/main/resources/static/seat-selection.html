@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Select Seat</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* 
+         * ============================================
+         * SEAT SELECTION PAGE STYLES
+         * ============================================
+         * Visual seat map with color-coded seat status
+         * 
+         * COLORS:
+         * - GREEN: Available seats (clickable)
+         * - RED: Locked/Booked seats (not clickable)
+         * - BLUE: Currently selected seat
+         */
+
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .seat {
+            padding: 15px 10px;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* AVAILABLE seats - GREEN */
+        .seat.AVAILABLE {
+            background-color: #28a745;
+            border-color: #218838;
+            color: white;
+        }
+
+        .seat.AVAILABLE:hover {
+            background-color: #1e7e34;
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        /* LOCKED seats - RED (not clickable) */
+        .seat.LOCKED {
+            background-color: #dc3545;
+            border-color: #c82333;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        /* BOOKED seats - RED (not clickable) */
+        .seat.BOOKED {
+            background-color: #dc3545;
+            border-color: #c82333;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        .seat input {
+            display: none;
+        }
+
+        /* SELECTED seat - BLUE */
+        .seat.selected {
+            border: 3px solid #0056b3;
+            background-color: #007bff !important;
+            color: white !important;
+            transform: scale(1.12);
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Booking Info Panel */
+        .booking-info {
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+        }
+
+        .booking-info h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.4em;
+        }
+
+        .booking-info p {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+
+        /* Legend */
+        .legend {
+            text-align: center;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .legend-item.available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .legend-item.locked {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .legend-item.selected-legend {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        /* Action Area */
+        .action-area {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-area .btn {
+            padding: 14px 28px;
+            font-size: 1.1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-lock {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-lock:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-proceed {
+            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+            color: white;
+        }
+
+        .btn-proceed:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+            gap: 10px;
+        }
+
+        .step {
+            padding: 12px 20px;
+            background: #e9ecef;
+            border-radius: 25px;
+            position: relative;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+            color: white;
+        }
+
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        /* Message Box */
+        .message-box {
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message-box.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message-box.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        /* Selected Seat Display */
+        .selected-seat-display {
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .selected-seat-display .seat-label {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        /* Info Box */
+        .info-box {
+            max-width: 450px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .info-box h4 {
+            margin-top: 0;
+            color: #17a2b8;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        ============================================
+        SEAT SELECTION PAGE
+        ============================================
+        
+        FLOW:
+        1. User clicks AVAILABLE (green) seat → turns BLUE
+        2. User clicks "Lock Seat" → calls API
+        3. On success → "Proceed Booking" enabled
+        4. User clicks "Proceed Booking" → navigate to confirmation
+    -->
+
+    <h1>💺 Select Your Seat</h1>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+        <span class="step completed">1. Choose Flight ✓</span>
+        <span class="step active">2. Select Seat</span>
+        <span class="step">3. Confirm</span>
+    </div>
+
+    <!-- Booking Information -->
+    <div class="booking-info">
+        <h3 th:text="${flightNumber}">F101</h3>
+        <p>Booking ID: <strong th:text="'#' + ${bookingId}">#123</strong></p>
+        <p th:if="${booking}">
+            <span th:text="${booking.source}">NYC</span> →
+            <span th:text="${booking.destination}">LA</span>
+        </p>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <span class="legend-item available">🟢 Available</span>
+        <span class="legend-item locked">🔴 Locked/Booked</span>
+        <span class="legend-item selected-legend">🔵 Your Selection</span>
+    </div>
+
+    <!-- Message Box (for success/error messages) -->
+    <div id="messageBox" class="message-box"></div>
+
+    <!-- Selected Seat Display -->
+    <div id="selectedSeatDisplay" class="selected-seat-display" style="display: none;">
+        <p>Selected Seat:</p>
+        <div id="selectedSeatLabel" class="seat-label">--</div>
+    </div>
+
+    <!-- Seat Selection Form -->
+    <input type="hidden" id="bookingIdField" th:value="${bookingId}">
+
+    <!-- Seat Grid -->
+    <div class="seat-grid">
+        <!--
+            Each seat has:
+            - data-status: AVAILABLE, LOCKED, or BOOKED
+            - data-seat: seat number (e.g., A1)
+            
+            Click handling:
+            - AVAILABLE: can be selected (turns blue)
+            - LOCKED/BOOKED: cannot be clicked (red color)
+        -->
+        <div th:each="seat : ${seats}" th:class="'seat ' + ${seat.status}" th:data-status="${seat.status}"
+            th:data-seat="${seat.seatNumber}" onclick="handleSeatClick(this)">
+            <span th:text="${seat.seatNumber}">1A</span>
+        </div>
+    </div>
+
+    <!-- Error Message from Server -->
+    <div th:if="${error}"
+        style="color: #721c24; text-align:center; padding: 15px; margin: 20px auto; max-width: 450px; background: #f8d7da; border-radius: 8px;">
+        ❌ <span th:text="${error}"></span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-area">
+        <div class="button-group">
+            <!-- Lock Seat Button -->
+            <button type="button" id="lockSeatBtn" class="btn btn-lock" onclick="lockSeat()" disabled>
+                🔒 Lock Seat
+            </button>
+
+            <!-- Proceed Booking Button -->
+            <button type="button" id="proceedBtn" class="btn btn-proceed" onclick="proceedBooking()" disabled>
+                ➡️ Proceed Booking
+            </button>
+        </div>
+
+        <a href="/my-bookings" class="btn btn-cancel">❌ Cancel</a>
+    </div>
+
+    <!-- Information Box -->
+    <div class="info-box">
+        <h4>ℹ️ How It Works</h4>
+        <ul>
+            <li>Click on a <strong>green seat</strong> to select it (turns blue)</li>
+            <li>Only <strong>one seat</strong> can be selected at a time</li>
+            <li>Red seats are <strong>locked or booked</strong> by others</li>
+            <li>Click <strong>"Lock Seat"</strong> to reserve your selection</li>
+            <li>After locking, click <strong>"Proceed Booking"</strong> to continue</li>
+            <li>Your lock is valid for <strong>10 minutes</strong></li>
+        </ul>
+    </div>
+
+    <script>
+        /**
+         * ============================================
+         * SEAT SELECTION JAVASCRIPT
+         * ============================================
+         * 
+         * Variables:
+         * - selectedSeat: currently selected seat number
+         * - isLocked: true if seat has been successfully locked
+         */
+
+        let selectedSeat = null;
+        let isLocked = false;
+
+        /**
+         * Handle Seat Click
+         * 
+         * LOGIC:
+         * 1. Check if seat is AVAILABLE (only available seats can be selected)
+         * 2. Deselect previously selected seat
+         * 3. Select the clicked seat (add 'selected' class for BLUE color)
+         * 4. Enable "Lock Seat" button
+         * 5. Reset lock state if seat changes
+         * 
+         * @param {HTMLElement} element - The clicked seat element
+         */
+        function handleSeatClick(element) {
+            const status = element.getAttribute('data-status');
+            const seatNumber = element.getAttribute('data-seat');
+
+            console.log('Seat clicked:', seatNumber, 'Status:', status);
+
+            // Only AVAILABLE seats can be selected
+            if (status !== 'AVAILABLE') {
+                showMessage('This seat is not available. Please select a green seat.', 'error');
+                return;
+            }
+
+            // Deselect all other seats
+            document.querySelectorAll('.seat').forEach(seat => {
+                seat.classList.remove('selected');
+            });
+
+            // Select the clicked seat (turns BLUE via CSS)
+            element.classList.add('selected');
+            selectedSeat = seatNumber;
+
+            // Update the selected seat display
+            document.getElementById('selectedSeatDisplay').style.display = 'block';
+            document.getElementById('selectedSeatLabel').textContent = seatNumber;
+
+            // Enable "Lock Seat" button
+            document.getElementById('lockSeatBtn').disabled = false;
+
+            // Reset lock state when seat changes
+            if (isLocked) {
+                isLocked = false;
+                document.getElementById('proceedBtn').disabled = true;
+                showMessage('Seat changed. Please lock the new seat.', 'error');
+            } else {
+                hideMessage();
+            }
+
+            console.log('Selected seat:', selectedSeat);
+        }
+
+        /**
+         * Lock Seat
+         * 
+         * LOGIC:
+         * 1. Validate a seat is selected
+         * 2. Call POST /lock-seat API
+         * 3. On success: show message, enable "Proceed Booking"
+         * 4. On failure: show error message
+         */
+        function lockSeat() {
+            if (!selectedSeat) {
+                showMessage('Please select a seat first!', 'error');
+                return;
+            }
+
+            const bookingId = document.getElementById('bookingIdField').value;
+
+            // Show loading state
+            const lockBtn = document.getElementById('lockSeatBtn');
+            lockBtn.disabled = true;
+            lockBtn.textContent = '⏳ Locking...';
+
+            console.log('Locking seat:', selectedSeat, 'for booking:', bookingId);
+
+            // Call the lock-seat API
+            fetch('/lock-seat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `bookingId=${bookingId}&seatNumber=${selectedSeat}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Lock response:', data);
+
+                    if (data.success) {
+                        // SUCCESS: Show message and enable Proceed button
+                        isLocked = true;
+                        showMessage('✅ Seat locked successfully! You can now proceed with booking.', 'success');
+
+                        lockBtn.textContent = '✓ Seat Locked';
+                        lockBtn.disabled = true;
+
+                        // Enable Proceed Booking button
+                        document.getElementById('proceedBtn').disabled = false;
+
+                        // Update progress step
+                        const steps = document.querySelectorAll('.step');
+                        steps[1].classList.remove('active');
+                        steps[1].classList.add('completed');
+                        steps[1].innerHTML = '2. Select Seat ✓';
+                        steps[2].classList.add('active');
+                    } else {
+                        // FAILED: Show error
+                        showMessage('❌ ' + (data.message || 'Failed to lock seat. It may already be taken.'), 'error');
+                        lockBtn.textContent = '🔒 Lock Seat';
+                        lockBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Lock error:', error);
+                    showMessage('❌ Error locking seat. Please try again.', 'error');
+                    lockBtn.textContent = '🔒 Lock Seat';
+                    lockBtn.disabled = false;
+                });
+        }
+
+        /**
+         * Proceed Booking
+         * 
+         * LOGIC:
+         * 1. Validate seat is selected and locked
+         * 2. Navigate to booking-confirmation.html with parameters
+         */
+        function proceedBooking() {
+            if (!selectedSeat) {
+                showMessage('Please select a seat first!', 'error');
+                return;
+            }
+
+            if (!isLocked) {
+                showMessage('Please lock the seat first by clicking "Lock Seat"!', 'error');
+                return;
+            }
+
+            const bookingId = document.getElementById('bookingIdField').value;
+
+            console.log('Proceeding to confirmation with:', {
+                bookingId: bookingId,
+                seatNumber: selectedSeat
+            });
+
+            // Navigate to booking confirmation page
+            window.location.href = `/booking-confirmation?bookingId=${bookingId}&seatNumber=${selectedSeat}`;
+        }
+
+        /**
+         * Show Message
+         * 
+         * @param {string} message - Message to display
+         * @param {string} type - 'success' or 'error'
+         */
+        function showMessage(message, type) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.className = 'message-box ' + type;
+            messageBox.style.display = 'block';
+        }
+
+        /**
+         * Hide Message
+         */
+        function hideMessage() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.style.display = 'none';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Seat selection page loaded');
+
+            // Ensure buttons are in correct initial state
+            document.getElementById('lockSeatBtn').disabled = true;
+            document.getElementById('proceedBtn').disabled = true;
+        });
+    </script>
+</body>
+
+</html>

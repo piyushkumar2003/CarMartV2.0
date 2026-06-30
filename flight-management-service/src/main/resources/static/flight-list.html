@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Flights</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1>Flight List</h1>
+    <a href="/add-flight" class="btn">Add New Flight</a>
+    <a href="/report" class="btn" style="background-color: green;">View Reports</a>
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Flight No</th>
+                <th>Airline</th>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Date</th>
+                <th>Seats</th>
+                <th>Available</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="flight : ${flights}">
+                <td th:text="${flight.id}">1</td>
+                <td th:text="${flight.flightNumber}">AB123</td>
+                <td th:text="${flight.airlineName}">Airline</td>
+                <td th:text="${flight.source}">NYC</td>
+                <td th:text="${flight.destination}">LAX</td>
+                <td th:text="${flight.dateOfJourney}">2023-01-01</td>
+                <td th:text="${flight.totalSeats}">100</td>
+                <td th:text="${flight.availableSeats}">100</td>
+                <td th:text="${flight.price}">$100</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Frequent Travelers</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .travelers-container {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .travelers-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .travelers-list {
+            margin-top: 20px;
+        }
+
+        .traveler-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+
+        .traveler-item:hover {
+            background: #f8f9fa;
+        }
+
+        .traveler-info {
+            flex: 1;
+        }
+
+        .traveler-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .traveler-details {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .traveler-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .add-form {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .add-form h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .nav-links {
+            margin-bottom: 20px;
+        }
+
+        .nav-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="travelers-container">
+        <div class="nav-links">
+            <a href="/passenger-dashboard">← Dashboard</a>
+            <a href="/profile">My Profile</a>
+        </div>
+
+        <h1>👥 Frequent Travelers</h1>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${param.added}" class="message success">
+            ✅ Traveler added successfully!
+        </div>
+        <div th:if="${param.deleted}" class="message success">
+            ✅ Traveler removed successfully!
+        </div>
+        <div th:if="${param.error}" class="message error">
+            ❌ <span th:text="${param.error}">Error</span>
+        </div>
+
+        <!-- Travelers List -->
+        <div class="travelers-card">
+            <h2>Saved Travelers</h2>
+
+            <div class="travelers-list" th:if="${!travelers.empty}">
+                <div th:each="traveler : ${travelers}" class="traveler-item">
+                    <div class="traveler-info">
+                        <div class="traveler-name" th:text="${traveler.fullName}">John Doe</div>
+                        <div class="traveler-details">
+                            <span th:if="${traveler.email}">📧 <span th:text="${traveler.email}">email</span></span>
+                            <span th:if="${traveler.phone}"> | 📞 <span th:text="${traveler.phone}">phone</span></span>
+                        </div>
+                    </div>
+                    <span class="traveler-badge" th:text="${traveler.relationship}">SELF</span>
+                    <form action="/delete-traveler" method="post" style="margin-left: 15px;">
+                        <input type="hidden" name="travelerId" th:value="${traveler.id}">
+                        <button type="submit" class="btn btn-danger"
+                            onclick="return confirm('Are you sure you want to remove this traveler?')">
+                            🗑️ Remove
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div th:if="${travelers.empty}" class="empty-state">
+                <div class="icon">👤</div>
+                <p>No frequent travelers saved yet.</p>
+                <p>Add travelers below for quick booking!</p>
+            </div>
+        </div>
+
+        <!-- Add Traveler Form -->
+        <div class="add-form">
+            <h3>➕ Add New Traveler</h3>
+            <form action="/add-traveler" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="relationship">Relationship *</label>
+                        <select id="relationship" name="relationship" required>
+                            <option value="">Select...</option>
+                            <option value="SELF">Self</option>
+                            <option value="SPOUSE">Spouse</option>
+                            <option value="CHILD">Child</option>
+                            <option value="PARENT">Parent</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter email (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter phone (optional)">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">➕ Add Traveler</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

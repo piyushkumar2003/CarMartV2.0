@@ -1,0 +1,62 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0" *ngIf="flight">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-journal-text me-2"></i> Review your Booking</h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Flight Summary -->
+                    <div class="alert alert-light border shadow-sm mb-4">
+                        <h5 class="fw-bold mb-3 text-primary">Flight Details</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Airline</small>
+                                <span class="fw-bold">{{flight.airlineName}}</span>
+                                <small class="text-muted d-block">{{flight.flightNumber}}</small>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">From</small>
+                                <span class="fw-bold">{{flight.source}}</span>
+                                <small class="text-muted d-block">{{flight.dateOfJourney}}</small>
+                            </div>
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">To</small>
+                                <span class="fw-bold">{{flight.destination}}</span>
+                                <small class="text-muted d-block">{{flight.dateOfJourney}}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div *ngIf="errorMessage" class="alert alert-danger border-0 shadow-sm mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {{errorMessage}}
+                    </div>
+
+                    <!-- Passenger Details Form -->
+                    <h5 class="fw-bold mb-3">Passenger Details</h5>
+                    <form (ngSubmit)="confirmBooking()">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Full Name</label>
+                            <input type="text" class="form-control" placeholder="Enter passenger name" name="name"
+                                [(ngModel)]="passengerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email Address</label>
+                            <input type="email" class="form-control" placeholder="Enter email" name="email"
+                                [(ngModel)]="passengerEmail" required>
+                        </div>
+
+                        <div class="d-grid mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg shadow rounded-pill fw-bold">
+                                Proceed to Pay ₹{{flight.price}}
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

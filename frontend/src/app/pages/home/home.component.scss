@@ -1,0 +1,29 @@
+.hero-section {
+    background: linear-gradient(to bottom, #051423 0%, #041029 50%, #f2f2f2 100%);
+    padding-bottom: 3rem;
+    padding-top: 1rem;
+}
+
+.search-widget {
+    position: relative;
+    z-index: 10;
+
+    .form-control {
+        box-shadow: none;
+
+        &:focus {
+            border-color: #065af3;
+        }
+    }
+
+    .search-btn {
+        background: linear-gradient(93deg, #53b2fe, #065af3);
+        border: none;
+        transition: transform 0.2s;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 243, 0.4);
+        }
+    }
+}

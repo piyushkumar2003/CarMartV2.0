@@ -1,0 +1,36 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 text-center" *ngIf="flight || booking">
+                <div class="card-header bg-success text-white py-3">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-credit-card me-2"></i> Payment Gateway</h4>
+                </div>
+                <div class="card-body p-5">
+                    <!-- Error Message -->
+                    <div *ngIf="errorMessage" class="alert alert-danger border-0 shadow-sm mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {{errorMessage}}
+                    </div>
+
+                    <h5 class="text-muted mb-4">Total Amount to Pay</h5>
+                    <h1 class="display-4 fw-bold text-primary mb-4">₹{{flight?.price || booking?.price}}</h1>
+
+                    <div class="alert alert-info border-0">
+                        Booking Reference: <strong>#{{booking?.id || booking?.bookingId || 'PENDING'}}</strong>
+                    </div>
+
+                    <p class="text-muted mb-4">
+                        {{ booking?.status === 'PAYMENT_PENDING' ? 'Retry payment to complete this booking.' : 'Click below to simulate a successful payment.' }}
+                    </p>
+
+                    <button class="btn btn-success btn-lg w-100 rounded-pill fw-bold shadow-lg"
+                        (click)="processPayment()" [disabled]="processing">
+                        <span *ngIf="processing" class="spinner-border spinner-border-sm me-2" role="status"
+                            aria-hidden="true"></span>
+                        {{ processing ? 'Processing...' : (booking?.status === 'PAYMENT_PENDING' ? 'Retry Payment' : 'Pay Now') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

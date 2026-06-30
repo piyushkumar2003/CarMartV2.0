@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Admin - All Bookings</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* 
+         * ============================================
+         * ADMIN BOOKINGS PAGE STYLES
+         * ============================================
+         * Admin view showing all bookings in the system
+         */
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #343a40;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .filter-section select {
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .stat-card p {
+            margin: 5px 0 0 0;
+            font-size: 0.9em;
+        }
+
+        .stat-initiated {
+            background: #e2e3e5;
+        }
+
+        .stat-pending {
+            background: #fff3cd;
+        }
+
+        .stat-payment-pending {
+            background: #ffe5d0;
+        }
+
+        .stat-confirmed {
+            background: #d4edda;
+        }
+
+        .stat-cancelled {
+            background: #f8d7da;
+        }
+
+        .stat-expired {
+            background: #d6d8db;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-INITIATED {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-PENDING {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-PAYMENT_PENDING {
+            background: #ffe5d0;
+            color: #8a4b00;
+        }
+
+        .status-CONFIRMED {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-CANCELLED {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-EXPIRED {
+            background: #d6d8db;
+            color: #1b1e21;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #343a40;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        tr:hover:nth-child(even) {
+            background: #f1f1f1;
+        }
+
+        .user-id {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .timestamp {
+            font-size: 0.85em;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        ============================================
+        ADMIN BOOKINGS PAGE
+        ============================================
+        
+        PURPOSE:
+        - Admin view of ALL bookings in the system
+        - Filter by status
+        - See user IDs, timestamps, all details
+        
+        ACCESS: Admins only
+    -->
+
+    <div class="admin-header">
+        <h1>📋 All Bookings</h1>
+        <a href="/admin-dashboard" class="btn">← Admin Dashboard</a>
+    </div>
+
+    <!-- Filter by Status -->
+    <div class="filter-section">
+        <form action="/admin-bookings" method="get" style="display: flex; align-items: center;">
+            <label for="status">Filter by Status:</label>
+            <select name="status" id="status">
+                <option value="">All Statuses</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
+                    th:selected="${selectedStatus == s.name()}">STATUS</option>
+            </select>
+            <button type="submit" class="btn">Apply Filter</button>
+            <a th:if="${selectedStatus}" href="/admin-bookings" class="btn"
+                style="margin-left: 10px; background: #6c757d;">Clear Filter</a>
+        </form>
+    </div>
+
+    <!-- Statistics Summary (would need to pass counts from controller, simplified version) -->
+    <div class="stats-row">
+        <div class="stat-card stat-initiated">
+            <h3 th:text="${#lists.size(bookings.?[status == 'INITIATED'])}">0</h3>
+            <p>Initiated</p>
+        </div>
+        <div class="stat-card stat-pending">
+            <h3 th:text="${#lists.size(bookings.?[status == 'PENDING'])}">0</h3>
+            <p>Pending</p>
+        </div>
+        <div class="stat-card stat-payment-pending">
+            <h3 th:text="${#lists.size(bookings.?[status == 'PAYMENT_PENDING'])}">0</h3>
+            <p>Payment Pending</p>
+        </div>
+        <div class="stat-card stat-confirmed">
+            <h3 th:text="${#lists.size(bookings.?[status == 'CONFIRMED'])}">0</h3>
+            <p>Confirmed</p>
+        </div>
+        <div class="stat-card stat-cancelled">
+            <h3 th:text="${#lists.size(bookings.?[status == 'CANCELLED'])}">0</h3>
+            <p>Cancelled</p>
+        </div>
+        <div class="stat-card stat-expired">
+            <h3 th:text="${#lists.size(bookings.?[status == 'EXPIRED'])}">0</h3>
+            <p>Expired</p>
+        </div>
+    </div>
+
+    <!-- Bookings Count -->
+    <p style="color: #666;">
+        Showing <strong th:text="${#lists.size(bookings)}">0</strong> booking(s)
+        <span th:if="${selectedStatus}"> with status <strong th:text="${selectedStatus}"></strong></span>
+    </p>
+
+    <!-- No Bookings Message -->
+    <div th:if="${#lists.isEmpty(bookings)}"
+        style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 5px;">
+        <h3>No bookings found</h3>
+        <p th:if="${selectedStatus}">No bookings with status: <span th:text="${selectedStatus}"></span></p>
+        <p th:unless="${selectedStatus}">There are no bookings in the system yet.</p>
+    </div>
+
+    <!-- Bookings Table -->
+    <table th:if="${not #lists.isEmpty(bookings)}">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Flight</th>
+                <th>Route</th>
+                <th>Date</th>
+                <th>Seat</th>
+                <th>Class</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="booking : ${bookings}">
+                <!-- Booking ID -->
+                <td>
+                    <a th:href="@{/booking-status/{id}(id=${booking.id})}" th:text="'#' + ${booking.id}">#123</a>
+                </td>
+
+                <!-- User ID -->
+                <td class="user-id" th:text="${booking.userId}">1</td>
+
+                <!-- Flight -->
+                <td th:text="${booking.flightNumber}">F101</td>
+
+                <!-- Route -->
+                <td th:text="${booking.source} + ' → ' + ${booking.destination}">NYC → LA</td>
+
+                <!-- Date -->
+                <td th:text="${booking.dateOfJourney}">2024-01-15</td>
+
+                <!-- Seat -->
+                <td>
+                    <span th:if="${booking.seatNumber}" th:text="${booking.seatNumber}">3A</span>
+                    <span th:unless="${booking.seatNumber}" style="color: #999;">-</span>
+                </td>
+
+                <!-- Class -->
+                <td th:text="${booking.seatClass}">Economy</td>
+
+                <!-- Status -->
+                <td>
+                    <span class="status-badge" th:classappend="'status-' + ${booking.status}"
+                        th:text="${booking.status}">CONFIRMED</span>
+                </td>
+
+                <!-- Created At -->
+                <td class="timestamp" th:text="${booking.createdAt}">2024-01-15 10:30</td>
+
+                <!-- Updated At -->
+                <td class="timestamp" th:text="${booking.updatedAt}">2024-01-15 10:35</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Footer Navigation -->
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+        <a href="/admin-dashboard" class="btn">← Back to Dashboard</a>
+        <a href="http://localhost:8082/all-flights" class="btn" target="_blank">
+            Go to Flight Management →
+        </a>
+    </div>
+</body>
+
+</html>

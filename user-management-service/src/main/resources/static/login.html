@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <h1>Login</h1>
+    <div th:if="${error}" style="color: red;" th:text="${error}"></div>
+    <form action="/login" method="post">
+        <label>Username</label>
+        <input type="text" name="username" required>
+
+        <label>Password</label>
+        <div style="position: relative;">
+            <input type="password" name="password" id="password" required style="width: 100%;">
+            <span onclick="togglePassword()"
+                style="position: absolute; right: 10px; top: 10px; cursor: pointer;">👁️</span>
+        </div>
+
+        <button type="submit" class="btn">Login</button>
+        <button type="button" class="btn" onclick="history.back()"
+            style="background-color: #6c757d; margin-top: 10px;">Back</button>
+    </form>
+    <a href="/register">Create Account</a>
+    <script>
+        function togglePassword() {
+            var x = document.getElementById("password");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+</body>
+
+</html>

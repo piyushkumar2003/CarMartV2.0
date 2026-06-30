@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Booking Confirmation</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* 
+         * ============================================
+         * BOOKING CONFIRMATION PAGE STYLES
+         * ============================================
+         * Intermediate page after seat is locked
+         */
+
+        .confirmation-container {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .confirmation-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 25px 0;
+            color: white;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .confirmation-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .confirmation-title {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .confirmation-subtitle {
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+            gap: 10px;
+        }
+
+        .step {
+            padding: 12px 20px;
+            background: #e9ecef;
+            border-radius: 25px;
+            font-weight: 500;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+            color: white;
+        }
+
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        /* Booking Details Card */
+        .booking-details-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 25px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .booking-details-card h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .seat-highlight {
+            font-size: 1.8em;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            font-size: 1.1em;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #5a6268;
+        }
+
+        /* Timer Warning */
+        .timer-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            color: #856404;
+        }
+
+        .timer-warning .countdown {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        /* Info Note */
+        .info-note {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        ============================================
+        BOOKING CONFIRMATION PAGE
+        ============================================
+        
+        PURPOSE:
+        - Show selected flight and seat details
+        - Confirm seat is locked
+        - Allow user to proceed to payment/confirmation
+        
+        FLOW:
+        - Arrives after seat is locked in seat-selection.html
+        - Proceeds to booking-pending.html on confirm
+    -->
+
+    <div class="confirmation-container">
+        <h1>✈️ Confirm Your Booking</h1>
+
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <span class="step completed">1. Choose Flight ✓</span>
+            <span class="step completed">2. Select Seat ✓</span>
+            <span class="step active">3. Confirm</span>
+        </div>
+
+        <!-- Confirmation Status Box -->
+        <div class="confirmation-box">
+            <div class="confirmation-icon">🎉</div>
+            <h2 class="confirmation-title">Seat Reserved!</h2>
+            <p class="confirmation-subtitle">Your seat is temporarily held. Please confirm to complete booking.</p>
+        </div>
+
+        <!-- Timer Warning -->
+        <div class="timer-warning">
+            <p>⏱️ Your seat reservation will expire in approximately:</p>
+            <div class="countdown">10 Minutes</div>
+            <p style="margin-bottom: 0;">Please confirm your booking to secure this seat.</p>
+        </div>
+
+        <!-- Booking Details Card -->
+        <div class="booking-details-card">
+            <h3>📋 Booking Details</h3>
+
+            <div class="detail-row">
+                <span class="detail-label">Booking ID:</span>
+                <span class="detail-value" th:text="'#' + ${bookingId}">#123</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Flight Number:</span>
+                <span class="detail-value" th:text="${booking.flightNumber}">F101</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Route:</span>
+                <span class="detail-value" th:text="${booking.source} + ' → ' + ${booking.destination}">NYC → LA</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Date:</span>
+                <span class="detail-value" th:text="${booking.dateOfJourney}">2024-01-15</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Selected Seat:</span>
+                <span class="seat-highlight" th:text="${seatNumber}">A1</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Class:</span>
+                <span class="detail-value" th:text="${booking.seatClass} ?: 'Economy'">Economy</span>
+            </div>
+
+            <div class="detail-row" style="margin-top: 15px; padding-top: 15px; border-top: 2px dashed #eee;">
+                <span class="detail-label">Estimated Price:</span>
+                <span class="detail-value" style="color: #28a745; font-size: 1.4em;" th:text="'₹ ' + ${booking.price}">₹
+                    350</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <!-- Proceed to Final Confirmation -->
+            <form action="/lock-seat-and-pending" method="post" style="display: inline;">
+                <input type="hidden" name="bookingId" th:value="${bookingId}">
+                <input type="hidden" name="seatNumber" th:value="${seatNumber}">
+                <button type="submit" class="btn-large btn-confirm">
+                    ✅ Confirm & Continue
+                </button>
+            </form>
+
+            <!-- Go Back -->
+            <a th:href="@{/select-seat(bookingId=${bookingId})}" class="btn-large btn-back">
+                ← Change Seat
+            </a>
+        </div>
+
+        <p class="info-note">
+            <strong>Note:</strong> By clicking "Confirm & Continue", you agree to proceed with this booking.
+            You will be redirected to the final confirmation page.
+        </p>
+    </div>
+</body>
+
+</html>

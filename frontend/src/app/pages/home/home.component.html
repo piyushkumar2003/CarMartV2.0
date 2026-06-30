@@ -1,0 +1,93 @@
+<div class="hero-section">
+    <div class="container text-center text-white py-5">
+        <h1 class="display-4 fw-bold mb-2">Make Your Trip Memorable</h1>
+        <p class="lead mb-5">Book domestic and international flights at the lowest prices.</p>
+
+        <div class="search-widget card shadow-lg text-dark mx-auto p-4"
+            style="max-width: 1000px; border-radius: 12px; border: none;">
+            <div class="card-body">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3 text-start">
+                        <label class="form-label text-muted small fw-bold text-uppercase">From</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i
+                                    class="bi bi-geo-alt-fill text-primary"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0 fw-bold fs-5" placeholder="City"
+                                [(ngModel)]="source">
+                        </div>
+                    </div>
+
+                    <div class="col-md-1 d-flex justify-content-center align-items-center">
+                        <button class="btn btn-light rounded-circle shadow-sm border"><i
+                                class="bi bi-arrow-left-right text-primary"></i></button>
+                    </div>
+
+                    <div class="col-md-3 text-start">
+                        <label class="form-label text-muted small fw-bold text-uppercase">To</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i
+                                    class="bi bi-geo-alt-fill text-primary"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0 fw-bold fs-5" placeholder="City"
+                                [(ngModel)]="destination">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 text-start">
+                        <label class="form-label text-muted small fw-bold text-uppercase">Departure</label>
+                        <input type="date" class="form-control fw-bold border-0 bg-light" [(ngModel)]="date">
+                    </div>
+
+                    <div class="col-md-2 text-start">
+                        <label class="form-label text-muted small fw-bold text-uppercase">Travellers & Class</label>
+                        <div class="fw-bold fs-6">1 Traveller</div>
+                        <div class="small text-muted">Economy</div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <button
+                            class="btn btn-primary btn-lg px-5 rounded-pill shadow fw-bold text-uppercase search-btn"
+                            (click)="onSearch()">Search Flights</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <h2 class="mb-4 fw-bold">Exclusive Offers</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <img src="https://promos.makemytrip.com/images/flight-offer-new.jpg" class="card-img-top" alt="Offer 1"
+                    style="height: 150px; object-fit: cover; background-color: #ddd;">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Flat 15% OFF</h5>
+                    <p class="card-text small text-muted">On domestic flights with XYZ Bank cards.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <img src="https://promos.makemytrip.com/images/intl-flight-offer.jpg" class="card-img-top" alt="Offer 2"
+                    style="height: 150px; object-fit: cover; background-color: #ddd;">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">International Deals</h5>
+                    <p class="card-text small text-muted">Fares starting at just ₹9999.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <img src="https://promos.makemytrip.com/images/hotel-offer.jpg" class="card-img-top" alt="Offer 3"
+                    style="height: 150px; object-fit: cover; background-color: #ddd;">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Zero Cancellation</h5>
+                    <p class="card-text small text-muted">Travel worry-free with zero cancellation charges.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

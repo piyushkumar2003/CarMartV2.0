@@ -1,0 +1,19 @@
+server:
+  port: 8882
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:///Users/piyushkumar/Desktop/MS-PROJECT/config-repo
+          default-label: main
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost

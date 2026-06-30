@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>My Bookings</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* 
+         * ============================================
+         * MY BOOKINGS PAGE STYLES
+         * ============================================
+         * Shows all bookings with status-specific styling
+         */
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .message-box {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .message-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .message-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        /* Status Badge Styles */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-INITIATED {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-PENDING {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-PAYMENT_PENDING {
+            background: #ffe5d0;
+            color: #8a4b00;
+        }
+
+        .status-CONFIRMED {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-CANCELLED {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-EXPIRED {
+            background: #d6d8db;
+            color: #1b1e21;
+        }
+
+        /* Table improvements */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #343a40;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-cell {
+            white-space: nowrap;
+        }
+
+        .action-cell form {
+            display: inline;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.85em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .empty-state h3 {
+            color: #6c757d;
+        }
+
+        .seat-display {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* Filter Button Styles */
+        .filter-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            background: #e9ecef;
+            color: #495057;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #dee2e6;
+        }
+
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .filter-btn.filter-confirmed.active {
+            background: #28a745;
+        }
+
+        .filter-btn.filter-cancelled.active {
+            background: #dc3545;
+        }
+
+        .filter-btn.filter-expired.active {
+            background: #6c757d;
+        }
+
+        .filter-btn.filter-pending.active {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .filter-btn.filter-payment-pending.active {
+            background: #fd7e14;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        ============================================
+        MY BOOKINGS PAGE
+        ============================================
+        
+        PURPOSE:
+        - List all bookings for the logged-in user
+        - Show status with color-coded badges
+        - Provide appropriate actions for each status
+        
+        STATUS ACTIONS:
+        - INITIATED: Continue booking (select seat)
+        - PENDING: Confirm or Cancel
+        - CONFIRMED: Upgrade to Business
+        - CANCELLED/EXPIRED: View only
+    -->
+
+    <div class="page-header">
+        <h1>My Bookings</h1>
+        <a href="/passenger-dashboard" class="btn">← Dashboard</a>
+    </div>
+
+    <!-- Success/Info Messages -->
+    <div th:if="${message}" class="message-box message-info">
+        <span th:text="${message}"></span>
+    </div>
+
+    <!-- Status Filter Bar -->
+    <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+        <span style="font-weight: 600; margin-right: 15px;">Filter by Status:</span>
+        <a href="/my-bookings" class="filter-btn" th:classappend="${selectedStatus == null} ? 'active' : ''">All</a>
+        <a href="/my-bookings?status=CONFIRMED" class="filter-btn filter-confirmed"
+            th:classappend="${selectedStatus == 'CONFIRMED'} ? 'active' : ''">✓ Confirmed</a>
+        <a href="/my-bookings?status=CANCELLED" class="filter-btn filter-cancelled"
+            th:classappend="${selectedStatus == 'CANCELLED'} ? 'active' : ''">✕ Cancelled</a>
+        <a href="/my-bookings?status=EXPIRED" class="filter-btn filter-expired"
+            th:classappend="${selectedStatus == 'EXPIRED'} ? 'active' : ''">⏱ Expired</a>
+        <a href="/my-bookings?status=PENDING" class="filter-btn filter-pending"
+            th:classappend="${selectedStatus == 'PENDING'} ? 'active' : ''">⏳ Pending</a>
+        <a href="/my-bookings?status=PAYMENT_PENDING" class="filter-btn filter-payment-pending"
+            th:classappend="${selectedStatus == 'PAYMENT_PENDING'} ? 'active' : ''">Payment Pending</a>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
+        <h3>📋 No Bookings Yet</h3>
+        <p>You haven't made any bookings. Start by searching for flights!</p>
+        <a href="/book-flight" class="btn btn-green">Search Flights</a>
+    </div>
+
+    <!-- Bookings Table -->
+    <table th:if="${not #lists.isEmpty(bookings)}">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Flight</th>
+                <th>Route</th>
+                <th>Date</th>
+                <th>Price</th>
+                <th>Seat</th>
+                <th>Class</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="booking : ${bookings}">
+                <!-- Booking ID -->
+                <td>
+                    <a th:href="@{/booking-status/{id}(id=${booking.id})}" th:text="'#' + ${booking.id}">#123</a>
+                </td>
+
+                <!-- Flight Number -->
+                <td th:text="${booking.flightNumber}">F101</td>
+
+                <!-- Route -->
+                <td th:text="${booking.source} + ' → ' + ${booking.destination}">NYC → LA</td>
+
+                <!-- Date -->
+                <td th:text="${booking.dateOfJourney}">2024-01-15</td>
+
+                <!-- Price -->
+                <td th:text="'$' + ${booking.price != null ? booking.price : '-'}">$2000.0</td>
+
+                <!-- Seat -->
+                <td>
+                    <span th:if="${booking.seatNumber}" class="seat-display" th:text="${booking.seatNumber}">3A</span>
+                    <span th:unless="${booking.seatNumber}" style="color: #999;">-</span>
+                </td>
+
+                <!-- Class -->
+                <td th:text="${booking.seatClass}">Economy</td>
+
+                <!-- Status Badge -->
+                <td>
+                    <span class="status-badge" th:classappend="'status-' + ${booking.status}"
+                        th:text="${booking.status}">CONFIRMED</span>
+                </td>
+
+                <!-- Actions (based on status) -->
+                <td class="action-cell">
+                    <!-- INITIATED: Continue to seat selection -->
+                    <div th:if="${booking.status == 'INITIATED'}">
+                        <a th:href="@{/select-seat(bookingId=${booking.id})}" class="btn btn-green btn-small">Select
+                            Seat</a>
+                    </div>
+
+                    <!-- PENDING: Confirm or Cancel -->
+                    <div th:if="${booking.status == 'PENDING'}">
+                        <form action="/confirm-booking" method="post" style="display:inline;">
+                            <input type="hidden" name="bookingId" th:value="${booking.id}">
+                            <button type="submit" class="btn btn-green btn-small">Confirm</button>
+                        </form>
+                        <form action="/cancel-booking" method="post" style="display:inline;">
+                            <input type="hidden" name="bookingId" th:value="${booking.id}">
+                            <button type="submit" class="btn btn-red btn-small">Cancel</button>
+                        </form>
+                    </div>
+
+                    <!-- PAYMENT_PENDING: Retry payment or Cancel -->
+                    <div th:if="${booking.status == 'PAYMENT_PENDING'}">
+                        <form action="/retry-payment" method="post" style="display:inline;">
+                            <input type="hidden" name="bookingId" th:value="${booking.id}">
+                            <button type="submit" class="btn btn-green btn-small">Retry Payment</button>
+                        </form>
+                        <form action="/cancel-booking" method="post" style="display:inline;">
+                            <input type="hidden" name="bookingId" th:value="${booking.id}">
+                            <button type="submit" class="btn btn-red btn-small">Cancel</button>
+                        </form>
+                    </div>
+
+                    <!-- CONFIRMED: Upgrade option -->
+                    <div th:if="${booking.status == 'CONFIRMED'}">
+                        <form th:if="${booking.seatClass == 'Economy'}" action="/upgrade-booking" method="post"
+                            style="display:inline;">
+                            <input type="hidden" name="bookingId" th:value="${booking.id}">
+                            <button type="submit" class="btn btn-small">Upgrade</button>
+                        </form>
+                        <span th:if="${booking.seatClass == 'Business'}" style="color: #28a745; font-weight: bold;">✓
+                            Premium</span>
+                    </div>
+
+                    <!-- CANCELLED/EXPIRED: View only -->
+                    <div th:if="${booking.status == 'CANCELLED' or booking.status == 'EXPIRED'}">
+                        <a th:href="@{/booking-status/{id}(id=${booking.id})}" class="btn btn-small"
+                            style="background: #6c757d;">View</a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Legend -->
+    <div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+        <h4 style="margin-top: 0;">Status Legend</h4>
+        <span class="status-badge status-INITIATED">INITIATED</span> - Booking started, seat not selected yet
+        <br><br>
+        <span class="status-badge status-PENDING">PENDING</span> - Seat reserved, waiting for confirmation (10 min
+        limit)
+        <br><br>
+        <span class="status-badge status-PAYMENT_PENDING">PAYMENT_PENDING</span> - Payment failed or service is
+        unavailable; retry before the seat hold expires
+        <br><br>
+        <span class="status-badge status-CONFIRMED">CONFIRMED</span> - Booking complete!
+        <br><br>
+        <span class="status-badge status-CANCELLED">CANCELLED</span> - Booking was cancelled
+        <br><br>
+        <span class="status-badge status-EXPIRED">EXPIRED</span> - Seat reservation timed out
+    </div>
+
+    <br>
+    <a href="/book-flight" class="btn btn-green">Book Another Flight</a>
+</body>
+
+</html>

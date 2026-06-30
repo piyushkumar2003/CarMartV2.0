@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Booking Details</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .status-container {
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #155724;
+            text-align: center;
+        }
+
+        .success-message::before {
+            content: "✅ ";
+        }
+
+        .booking-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .booking-id {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .status-INITIATED {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-PENDING {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-PAYMENT_PENDING {
+            background: #ffe5d0;
+            color: #8a4b00;
+        }
+
+        .status-CONFIRMED {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-CANCELLED {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-EXPIRED {
+            background: #d6d8db;
+            color: #1b1e21;
+        }
+
+        .detail-section {
+            margin: 20px 0;
+        }
+
+        .detail-section h3 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .detail-item {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .detail-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .seat-display {
+            font-size: 1.8em;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .timestamps {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .action-buttons {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        ============================================
+        BOOKING STATUS DETAIL PAGE
+        ============================================
+        
+        PURPOSE:
+        - Show detailed status of a specific booking
+        - Display all booking information
+        - Show appropriate actions based on status
+    -->
+
+    <div class="status-container">
+        <h1>Booking Details</h1>
+        <a href="/my-bookings">← Back to My Bookings</a>
+
+        <!-- Success Message (shown after confirmation) -->
+        <div th:if="${successMessage}" class="success-message">
+            <span th:text="${successMessage}">Booking confirmed!</span>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}" style="color: red; margin: 20px 0;">
+            ❌ <span th:text="${error}"></span>
+        </div>
+
+        <!-- Booking Card -->
+        <div class="booking-card">
+            <!-- Header with ID and Status -->
+            <div class="booking-header">
+                <div>
+                    <span class="booking-id">Booking #<span th:text="${booking.id}">123</span></span>
+                    <div th:if="${booking.pnr}" style="color: #6610f2; font-weight: bold; margin-top: 5px;">
+                        PNR: <span th:text="${booking.pnr}">AIR-F101-1234</span>
+                    </div>
+                </div>
+                <span class="status-badge" th:classappend="'status-' + ${booking.status}"
+                    th:text="${booking.status}">CONFIRMED</span>
+            </div>
+
+            <!-- Flight Details -->
+            <div class="detail-section">
+                <h3>✈️ Flight Information</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Flight Number</div>
+                        <div class="detail-value" th:text="${booking.flightNumber}">F101</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Date</div>
+                        <div class="detail-value" th:text="${booking.dateOfJourney}">2024-01-15</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">From</div>
+                        <div class="detail-value" th:text="${booking.source}">New York</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">To</div>
+                        <div class="detail-value" th:text="${booking.destination}">Los Angeles</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seat Details -->
+            <div class="detail-section">
+                <h3>💺 Seat Information</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Seat Number</div>
+                        <div class="seat-display" th:text="${booking.seatNumber} ?: 'Not selected'">3A</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Class</div>
+                        <div class="detail-value" th:text="${booking.seatClass}">Economy</div>
+                    </div>
+                </div>
+                <div class="detail-grid" style="margin-top: 15px;">
+                    <div class="detail-item">
+                        <div class="detail-label">Price Paid</div>
+                        <div class="detail-value" style="color: #28a745; font-size: 1.2em;"
+                            th:text="'₹ ' + ${booking.price}">₹ 300</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Explanation -->
+            <div class="detail-section">
+                <h3>📊 Status Details</h3>
+
+                <!-- INITIATED Status -->
+                <div th:if="${booking.status == 'INITIATED'}"
+                    style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                    <p><strong>What this means:</strong> Your booking has been started but you haven't selected a seat
+                        yet.</p>
+                    <p><strong>Next step:</strong> Select a seat to continue with your booking.</p>
+                </div>
+
+                <!-- PENDING Status -->
+                <div th:if="${booking.status == 'PENDING'}"
+                    style="background: #fff3cd; padding: 15px; border-radius: 5px;">
+                    <p><strong>What this means:</strong> Your seat is temporarily reserved for 10 minutes.</p>
+                    <p><strong>Next step:</strong> Confirm your booking before the reservation expires!</p>
+                </div>
+
+                <!-- PAYMENT_PENDING Status -->
+                <div th:if="${booking.status == 'PAYMENT_PENDING'}"
+                    style="background: #ffe5d0; padding: 15px; border-radius: 5px;">
+                    <p><strong>What this means:</strong> Your seat is temporarily reserved, but payment did not
+                        complete.</p>
+                    <p><strong>Next step:</strong> Retry payment before the seat reservation expires, or cancel this
+                        booking.</p>
+                </div>
+
+                <!-- CONFIRMED Status -->
+                <div th:if="${booking.status == 'CONFIRMED'}"
+                    style="background: #d4edda; padding: 15px; border-radius: 5px;">
+                    <p><strong>🎉 Congratulations!</strong> Your booking is confirmed and complete.</p>
+                    <p>Your seat is permanently reserved. Have a great flight!</p>
+                </div>
+
+                <!-- CANCELLED Status -->
+                <div th:if="${booking.status == 'CANCELLED'}"
+                    style="background: #f8d7da; padding: 15px; border-radius: 5px;">
+                    <p><strong>This booking was cancelled.</strong></p>
+                    <p>The seat has been released and is available for other passengers.</p>
+                </div>
+
+                <!-- EXPIRED Status -->
+                <div th:if="${booking.status == 'EXPIRED'}"
+                    style="background: #d6d8db; padding: 15px; border-radius: 5px;">
+                    <p><strong>This booking has expired.</strong></p>
+                    <p>The seat reservation timed out because it wasn't confirmed in time.</p>
+                </div>
+            </div>
+
+            <!-- Timestamps -->
+            <div class="timestamps">
+                <span>Created: <span th:text="${booking.createdAt}">2024-01-15 10:30:00</span></span>
+                <span style="margin-left: 30px;">
+                    Last Updated: <span th:text="${booking.updatedAt}">2024-01-15 10:35:00</span>
+                </span>
+            </div>
+
+            <!-- Action Buttons (based on status) -->
+            <div class="action-buttons">
+                <!-- INITIATED: Continue to seat selection -->
+                <a th:if="${booking.status == 'INITIATED'}" th:href="@{/select-seat(bookingId=${booking.id})}"
+                    class="btn btn-green">Select Seat →</a>
+
+                <!-- PENDING: Confirm or Cancel -->
+                <form th:if="${booking.status == 'PENDING'}" action="/confirm-booking" method="post">
+                    <input type="hidden" name="bookingId" th:value="${booking.id}">
+                    <button type="submit" class="btn btn-green">✅ Confirm Booking</button>
+                </form>
+
+                <form th:if="${booking.status == 'PENDING'}" action="/cancel-booking" method="post">
+                    <input type="hidden" name="bookingId" th:value="${booking.id}">
+                    <button type="submit" class="btn btn-red">Cancel</button>
+                </form>
+
+                <!-- PAYMENT_PENDING: Retry payment or Cancel -->
+                <form th:if="${booking.status == 'PAYMENT_PENDING'}" action="/retry-payment" method="post">
+                    <input type="hidden" name="bookingId" th:value="${booking.id}">
+                    <button type="submit" class="btn btn-green">Retry Payment</button>
+                </form>
+
+                <form th:if="${booking.status == 'PAYMENT_PENDING'}" action="/cancel-booking" method="post">
+                    <input type="hidden" name="bookingId" th:value="${booking.id}">
+                    <button type="submit" class="btn btn-red">Cancel</button>
+                </form>
+
+                <!-- CONFIRMED: Upgrade option -->
+                <form th:if="${booking.status == 'CONFIRMED' and booking.seatClass == 'Economy'}"
+                    action="/upgrade-booking" method="post">
+                    <input type="hidden" name="bookingId" th:value="${booking.id}">
+                    <button type="submit" class="btn">⬆️ Upgrade to Business</button>
+                </form>
+
+                <!-- CONFIRMED: Download E-Ticket -->
+                <a th:if="${booking.status == 'CONFIRMED'}" th:href="@{/download-ticket/{id}(id=${booking.id})}"
+                    class="btn btn-green" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    📄 Download E-Ticket
+                </a>
+
+                <!-- Common: Back to bookings -->
+                <a href="/my-bookings" class="btn" style="background: #6c757d;">← My Bookings</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

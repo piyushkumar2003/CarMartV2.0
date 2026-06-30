@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Search Flights</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <h1>Search Flights</h1>
+    <form action="/search-flights" method="get">
+        <label>Source</label>
+        <input type="text" name="source" placeholder="Source">
+
+        <label>Destination</label>
+        <input type="text" name="destination" placeholder="Destination">
+
+        <label>Date (YYYY-MM-DD)</label>
+        <input type="text" name="date" placeholder="Date">
+
+        <button type="submit" class="btn">Search</button>
+    </form>
+
+    <div th:if="${flights}">
+        <h2>Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight No</th>
+                    <th>Airline</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Date</th>
+                    <th>Avail Seats</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="flight : ${flights}">
+                    <td th:text="${flight.flightNumber}"></td>
+                    <td th:text="${flight.airlineName}"></td>
+                    <td th:text="${flight.source}"></td>
+                    <td th:text="${flight.destination}"></td>
+                    <td th:text="${flight.dateOfJourney}"></td>
+                    <td th:text="${flight.availableSeats}"></td>
+                    <td th:text="${flight.price}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

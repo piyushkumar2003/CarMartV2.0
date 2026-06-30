@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Search Booking by PNR</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .search-container {
+            max-width: 500px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-form {
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: center;
+            text-transform: uppercase;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn-search {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .nav-links {
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="search-container">
+        <h1>🔍 Search Booking</h1>
+        <p>Enter your PNR to view booking details</p>
+
+        <div class="search-card">
+            <!-- Error Message -->
+            <div th:if="${error}" class="error-message">
+                ❌ <span th:text="${error}">Error message</span>
+            </div>
+
+            <form action="/booking-by-pnr" method="get" class="search-form">
+                <div class="form-group">
+                    <input type="text" name="pnr" placeholder="E.g. AIR-F101-1234" required autofocus>
+                </div>
+                <button type="submit" class="btn-search">Search Booking</button>
+            </form>
+        </div>
+
+        <div class="nav-links">
+            <a href="/passenger-dashboard">← Dashboard</a>
+            |
+            <a href="/my-bookings">My Bookings</a>
+        </div>
+    </div>
+</body>
+
+</html>

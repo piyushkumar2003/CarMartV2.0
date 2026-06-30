@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Initiate Booking</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Page-specific styles */
+        .flight-details {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .flight-details h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .price-highlight {
+            font-size: 1.5em;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .info-box {
+            background: #e8f4fd;
+            border: 1px solid #b8daff;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            color: #004085;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .action-buttons form {
+            display: inline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Start Your Booking</h1>
+    <a href="/book-flight">← Back to Flight Search</a>
+
+    <!-- 
+        ============================================
+        BOOKING INITIATION PAGE
+        ============================================
+        
+        PURPOSE:
+        - Show flight details before booking
+        - Explain the booking process
+        - User clicks "Start Booking" to create INITIATED booking
+        
+        FLOW:
+        1. User views flight details
+        2. User clicks "Start Booking"
+        3. Booking created in INITIATED state
+        4. User redirected to seat selection
+    -->
+
+    <div class="flight-details">
+        <h2>Flight Details</h2>
+
+        <!-- Flight Information -->
+        <div class="detail-row">
+            <span class="detail-label">Flight Number:</span>
+            <span class="detail-value" th:text="${flight.flightNumber}">F101</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Airline:</span>
+            <span class="detail-value" th:text="${flight.airlineName}">Sample Airline</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">From:</span>
+            <span class="detail-value" th:text="${flight.source}">New York</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">To:</span>
+            <span class="detail-value" th:text="${flight.destination}">Los Angeles</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Date:</span>
+            <span class="detail-value" th:text="${flight.dateOfJourney}">2024-01-15</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Available Seats:</span>
+            <span class="detail-value" th:text="${flight.availableSeats}">50</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Price:</span>
+            <span class="detail-value price-highlight" th:text="'$' + ${flight.price}">$299</span>
+        </div>
+    </div>
+
+    <!-- Information Box: Explain the process -->
+    <div class="info-box">
+        <h3>📋 Booking Process</h3>
+        <ul>
+            <li><strong>Step 1:</strong> Click "Start Booking" to begin</li>
+            <li><strong>Step 2:</strong> Select your preferred seat</li>
+            <li><strong>Step 3:</strong> Seat will be held for <strong>10 minutes</strong></li>
+            <li><strong>Step 4:</strong> Confirm and pay to complete booking</li>
+        </ul>
+        <p style="margin-top: 10px; color: #856404;">
+            ⚠️ <strong>Note:</strong> If you don't confirm within 10 minutes,
+            your seat will be released automatically.
+        </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <!-- Form to initiate booking -->
+        <form action="/initiate-booking" method="post">
+            <input type="hidden" name="flightId" th:value="${flight.id}">
+            <button type="submit" class="btn btn-green" style="font-size: 1.2em; padding: 12px 30px;">
+                🎫 Start Booking
+            </button>
+        </form>
+
+        <br><br>
+        <a href="/book-flight" class="btn" style="background: #6c757d;">Cancel</a>
+    </div>
+</body>
+
+</html>
